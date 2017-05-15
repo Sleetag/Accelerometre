@@ -1,0 +1,13 @@
+#!/bin/sh
+APP_FILE=Hello
+UCLINUX_PATH=~/uClinux
+ROMFS_PATH=${UCLINUX_PATH}/romfs
+IMAGE_PATH=${UCLINUX_PATH}/images
+ 
+rm *~
+cp ${APP_FILE} ${ROMFS_PATH}/bin
+#mkdir ${ROMFS_PATH}/dev/i2c0
+genromfs -d ${ROMFS_PATH} -f romfs_5.img
+cp ${IMAGE_PATH}/vmlinux.bin .
+
+echo "romfs file generated"
