@@ -27,8 +27,8 @@ LDFLAGS= -Wl, -elf2flt -I$(ARM_LINUX_INCLUDE)
 LDLIBS = -L$(ARM_ELF_LIB) -lm -L$(UCLIBC_DIR)/. -L$(UCLIBC_DIR)/lib 
 
 
-SRC = fb_Graphic.c hal.c
-OBJS = fb_Graphic.o hal.o
+SRC = fb_Graphic.c hal.c smb380_drv.c i2c0_drv.c sys.c
+OBJS = fb_Graphic.o hal.o smb380_drv.o i2c0_drv.o sys.o
 EXEC = Hello
 
 
