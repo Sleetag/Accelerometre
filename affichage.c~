@@ -36,7 +36,7 @@ void draw_background(struct fb_sess *fb)
 			fb_draw_pixel(fb, x, y, blanc);
 		}
 	}
-	
+
 	for(x=0; x<fb_xres(fb); ++x) {
 		for(y=(fb_yres(fb)/2)+1; y<fb_yres(fb); ++y) {
 			fb_draw_pixel(fb, x, y, vert);
@@ -45,7 +45,7 @@ void draw_background(struct fb_sess *fb)
 	fb_sync(fb);
 }
 
-void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centre_y)
+void draw_pokiball(struct fb_sess *fb)
 {
 	const unsigned int blanc = 0xffffff;//blanc
 	const unsigned int vert = 0x00ff00;
@@ -53,13 +53,17 @@ void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centr
 	const unsigned int noir = 0x000000;
 	const unsigned int jaune = 0x00ffff;
 
+
+	unsigned int centre_x = fb_xres(fb) / 2;
+	unsigned int centre_y = (fb_yres(fb)/3 )+ 81;
+
 	unsigned  int rayon ;
 	unsigned int couleur;
 
 	unsigned int x, y;
 
 	for ( rayon =  0 ; rayon < 21 ; ++rayon)
-	{ 
+	{
 
 		for ( x = centre_x - rayon ; x < centre_x+rayon ; ++x)
 		{
@@ -68,13 +72,13 @@ void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centr
 			y = sqrt((rayon*rayon)-((x - centre_x)*(x - centre_x)) ) + centre_y ;
 
 
-			if ((rayon == 21 || rayon == 20 )|| 
+			if ((rayon == 21 || rayon == 20 )||
 				(rayon == 7 || rayon == 6 ) || (rayon == 0 || rayon == 1 || rayon == 2 ))
 				couleur = noir ;
 
 			carreau(fb, x, y,couleur);
 
-			y = -(sqrt((rayon*rayon )-((x - centre_x)*(x - centre_x)) ) )+ centre_y ; 
+			y = -(sqrt((rayon*rayon )-((x - centre_x)*(x - centre_x)) ) )+ centre_y ;
 
 			if (rayon > 7 && (rayon != 21 && rayon != 20) )
 				couleur = rouge ;
@@ -96,82 +100,11 @@ void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centr
 		if ( x > centre_x + 7 )
 			carreau(fb, x,  centre_y ,noir);
 	}
-}
 
-void carreau_vert(struct fb_sess *fb)
-{
-	const unsigned int blanc = 0xffffff;//blanc
-	const unsigned int vert = 0x00ff00;
-	const unsigned int rouge = 0xdd;
-	const unsigned int noir = 0x000000;
-	const unsigned int jaune = 0x00ffff;
 
-	unsigned int x, y;
 
-	for(x=0; x<fb_xres(fb); ++x) {
-		for(y=(fb_yres(fb)/2)+1; y<fb_yres(fb); ++y) {
-			fb_draw_pixel(fb, x, y, vert);
-		}
-	}
-}
 
-void pokiball_initial(struct fb_sess *fb)
-{
-	Global_x = fb_xres(fb) / 2;
-	Global_y = (fb_yres(fb)/3 )+ 81;
-	draw_pokiball(fb,Global_x,Global_y);
-	fb_sync(fb);
-}
 
-void droite(struct fb_sess *fb)
-{
-	carreau_vert(fb);
-	fb_sync(fb);
-	if (Global_x+3 < fb_xres(fb)-45 )
-	{
-		Global_x = Global_x+3 ;
-		draw_pokiball(fb,Global_x,Global_y);
-	}
-	else draw_pokiball(fb,Global_x,Global_y);
-	fb_sync(fb);
-}
-
-void gauche(struct fb_sess *fb)
-{
-	carreau_vert(fb);
-	fb_sync(fb);
-	if (Global_x-3 > 9 )
-	{
-		Global_x = Global_x-3;
-		draw_pokiball(fb,Global_x,Global_y);
-	}
-	else draw_pokiball(fb,Global_x,Global_y);
-	fb_sync(fb);
-}
-
-void haut(struct fb_sess *fb)
-{
-	carreau_vert(fb);
-	fb_sync(fb);
-	if (Global_y-3 > 36 ) 
-	{
-		Global_y = Global_y - 3 ;
-		draw_pokiball(fb,Global_x,Global_y);
-	}
-	else draw_pokiball(fb,Global_x,Global_y);
-	fb_sync(fb);
-}
-
-void bas(struct fb_sess *fb)
-{
-	carreau_vert(fb);
-	fb_sync(fb);
-	if (Global_y+3 < fb_yres(fb)-39 )
-	{
-		Global_y = Global_y +3 ;
-		draw_pokiball(fb,Global_x,Global_y+3);
-	}
-	else draw_pokiball(fb,Global_x,Global_y);
 	fb_sync(fb);
 }
 
@@ -200,9 +133,7 @@ void carreau(struct fb_sess *fb, int x, int y,unsigned int couleur)
 }
 
 
-void draw_pikatchou(struct fb_sess *fb,int x, int y)
-
-{
+void draw_pikatchou(struct fb_sess *fb,int x, int y){
 
 
 	const unsigned int blanc = 0xffffff;
@@ -271,7 +202,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 
 
-	// jaune 
+	// jaune
 
 	carreau(fb, (x), (y)-33,jaune);
 	carreau(fb, (x), (y)-30,jaune);
@@ -280,7 +211,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x), (y)-27,jaune);
 	carreau(fb, (x)+3, (y)-27,jaune);
 	carreau(fb, (x)+6, (y)-27,jaune);
-	
+
 
 	carreau(fb, (x), (y)-24,jaune);
 	carreau(fb, (x)+3, (y)-24,jaune);
@@ -291,12 +222,12 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 
 	carreau(fb, (x), (y)-18,jaune);
-	
+
 
 	carreau(fb, (x)+3, (y)-15,jaune);
 	carreau(fb, (x)+6, (y)-15,jaune);
 	carreau(fb, (x)+9, (y)-15,jaune);
-	
+
 	carreau(fb, (x)+15, (y)-15,jaune);
 
 	carreau(fb, (x)+6, (y)-12,jaune);
@@ -305,7 +236,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+15, (y)-12,jaune);
 
 
-	
+
 	carreau(fb, (x)+12, (y)-9,jaune);
 	carreau(fb, (x)+15, (y)-9,jaune);
 
@@ -341,8 +272,8 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+12, (y)+12,jaune);
 	carreau(fb, (x)+15, (y)+12,jaune);
 
-	
-	
+
+
 
 	//orange
 
@@ -363,11 +294,11 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+9, (y)+12,orange);
 
 
-	// rouge 
+	// rouge
 
 	carreau(fb, (x), (y)+3,rouge);
 	carreau(fb, (x)+3, (y)+3,rouge);
-	
+
 	carreau(fb, (x)+3, (y)+6,rouge);
 	carreau(fb, (x)+6, (y)+6,rouge);
 
@@ -379,7 +310,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+24, (y)-18,noir);
 	carreau(fb, (x)+27, (y)-18,noir);
 	carreau(fb, (x)+30, (y)-18,noir);
-	
+
 	carreau(fb, (x)+30, (y)-21,noir);
 	carreau(fb, (x)+33, (y)-21,noir);
 	carreau(fb, (x)+33, (y)-24,noir);
@@ -391,7 +322,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+42, (y)-30,noir);
 	carreau(fb, (x)+39, (y)-33,noir);
 	carreau(fb, (x)+42, (y)-33,noir);
-	
+
 
 	carreau(fb, (x)+39, (y)-24,noir);
 	carreau(fb, (x)+42, (y)-24,noir);
@@ -411,7 +342,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 
 	carreau(fb, (x)+42, (y)+1,noir);
-	
+
 	carreau(fb, (x)+42, (y)+6,noir);
 	carreau(fb, (x)+39, (y)+6,noir);
 	carreau(fb, (x)+39, (y)+9,noir);
@@ -421,16 +352,16 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+42, (y)+3,noir);
 
 
-	// jaune 
+	// jaune
 
 	carreau(fb, (x)+36, (y)-24,jaune);
 	carreau(fb, (x)+36, (y)-21,jaune);
-	
+
 
 	carreau(fb, (x)+36, (y)-18,jaune);
 	carreau(fb, (x)+33, (y)-18,jaune);
 
-	
+
 	carreau(fb, (x)+18, (y)-15,jaune);
 	carreau(fb, (x)+21, (y)-15,jaune);
 	carreau(fb, (x)+24, (y)-15,jaune);
@@ -445,14 +376,14 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+27, (y)-12,jaune);
 	carreau(fb, (x)+30, (y)-12,jaune);
 	carreau(fb, (x)+33, (y)-12,jaune);
-	
+
 	carreau(fb, (x)+18, (y)-9,jaune);
 	carreau(fb, (x)+21, (y)-9,jaune);
 	carreau(fb, (x)+24, (y)-9,jaune);
 	carreau(fb, (x)+27, (y)-9,jaune);
 	carreau(fb, (x)+30, (y)-9,jaune);
 
-	
+
 	carreau(fb, (x)+18, (y)-6,jaune);
 	carreau(fb, (x)+21, (y)-6,jaune);
 	carreau(fb, (x)+24, (y)-6,jaune);
@@ -484,7 +415,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+27, (y)+6,jaune);
 	carreau(fb, (x)+30, (y)+6,jaune);
 
-	
+
 	carreau(fb, (x)+27, (y)+9,jaune);
 	carreau(fb, (x)+30, (y)+9,jaune);
 	carreau(fb, (x)+33, (y)+9,jaune);
@@ -494,13 +425,13 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+24, (y)+12,jaune);
 	carreau(fb, (x)+27, (y)+12,jaune);
 	carreau(fb, (x)+33, (y)+12,jaune);
-	
+
 	carreau(fb, (x)+27, (y)+15,jaune);
 	carreau(fb, (x)+30, (y)+15,jaune);
 	carreau(fb, (x)+33, (y)+15,jaune);
 	carreau(fb, (x)+36, (y)+15,jaune);
 
-	// orange 
+	// orange
 
 	carreau(fb, (x)+39, (y)-21,orange);
 
@@ -528,7 +459,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 	carreau(fb, (x)+36, (y)+3,rouge);
 	carreau(fb, (x)+39, (y)+3,rouge);
-	
+
 	carreau(fb, (x)+33, (y)+6,rouge);
 	carreau(fb, (x)+36, (y)+6,rouge);
 
@@ -540,12 +471,12 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	/*bouche */
 
 	carreau(fb, (x)+21, (y)+9,noir);
-	
 
-	
+
+
 	/*yeux*/
-	
-	/* gauche */ 
+
+	/* gauche */
 
 	carreau(fb, (x)+9, (y)-3,noir);
 	carreau(fb, (x)+9, (y),noir);
@@ -557,7 +488,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+27, (y),noir);
 	carreau(fb, (x)+30, (y),noir);
 	carreau(fb, (x)+30, (y)-3,noir);
-	
+
 
 	/*corp*/
 
@@ -565,7 +496,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 
 	carreau(fb, (x), (y)+12,noir);
-	
+
 	carreau(fb, (x), (y)+15,noir);
 	carreau(fb, (x), (y)+21,noir);
 	carreau(fb, (x), (y)+18,noir);
@@ -585,7 +516,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+18, (y)+33,noir);
 
 	carreau(fb, (x)-3, (y)+36,noir);
-	
+
 	carreau(fb, (x)+9, (y)+36,noir);
 	carreau(fb, (x)+12, (y)+36,noir);
 	carreau(fb, (x)+15, (y)+36,noir);
@@ -594,11 +525,11 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x), (y)+39,noir);
 	carreau(fb, (x)+3, (y)+39,noir);
 	carreau(fb, (x)+6, (y)+39,noir);
-	
+
 	carreau(fb, (x)+6, (y)+36,noir);
 
 
-	// jaune 
+	// jaune
 
 
 	carreau(fb, (x)+3, (y)+15,jaune);
@@ -620,7 +551,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+12, (y)+21,jaune);
 	carreau(fb, (x)+15, (y)+21,jaune);
 
-	
+
 	carreau(fb, (x)+6, (y)+24,jaune);
 	carreau(fb, (x)+12, (y)+24,jaune);
 	carreau(fb, (x)+15, (y)+24,jaune);
@@ -636,7 +567,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+9, (y)+30,jaune);
 	carreau(fb, (x)+12, (y)+30,jaune);
 	carreau(fb, (x)+15, (y)+30,jaune);
-	
+
 	carreau(fb, (x)+9, (y)+33,jaune);
 	carreau(fb, (x)+12, (y)+33,jaune);
 
@@ -644,7 +575,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+3, (y)+36,jaune);
 
 
-	// orange 
+	// orange
 
 
 	carreau(fb, (x)+3, (y)+24,orange);
@@ -653,12 +584,12 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+6, (y)+33,orange);
 	carreau(fb, (x)+15, (y)+33,orange);
 
-	/* droite */ 
+	/* droite */
 
 	carreau(fb, (x)+39, (y)+12,noir);
 	carreau(fb, (x)+42, (y)+15,noir);
 	carreau(fb, (x)+39, (y)+15,noir);
-	
+
 
 	carreau(fb, (x)+39, (y)+18,noir);
 	carreau(fb, (x)+42, (y)+18,noir);
@@ -669,7 +600,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+39, (y)+30,noir);
 	carreau(fb, (x)+36, (y)+27,noir);
 	carreau(fb, (x)+33, (y)+24,noir);
-	
+
 
 	carreau(fb, (x)+39, (y)+33,noir);
 	carreau(fb, (x)+36, (y)+33,noir);
@@ -689,7 +620,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+36, (y)+39,noir);
 	carreau(fb, (x)+33, (y)+39,noir);
 
-	//jaune 
+	//jaune
 
 	carreau(fb, (x)+18, (y)+18,jaune);
 	carreau(fb, (x)+24, (y)+18,jaune);
@@ -704,7 +635,7 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+27, (y)+21,jaune);
 	carreau(fb, (x)+30, (y)+21,jaune);
 	carreau(fb, (x)+36, (y)+21,jaune);
-	
+
 
 	carreau(fb, (x)+18, (y)+24,jaune);
 	carreau(fb, (x)+21, (y)+24,jaune);
@@ -728,9 +659,9 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 	carreau(fb, (x)+27, (y)+30,jaune);
 	carreau(fb, (x)+30, (y)+30,jaune);
 	carreau(fb, (x)+33, (y)+30,jaune);
-	
+
 	carreau(fb, (x)+30, (y)+33,jaune);
-	
+
 	carreau(fb, (x)+33, (y)+36,jaune);
 	carreau(fb, (x)+36, (y)+36,jaune);
 	carreau(fb, (x)+39, (y)+36,jaune);
@@ -747,51 +678,5 @@ void draw_pikatchou(struct fb_sess *fb,int x, int y)
 
 	carreau(fb, (x)+27, (y)+33,orange);
 	carreau(fb, (x)+33, (y)+33,orange);
-	
+
 }
-
-void pikatchu_move (struct fb_sess *fb,int pas)
-{
-	int x;
-	int y = fb_yres(fb)/3;
-	int direct = 1 ;
-	while(1)
-	{
-		if ( direct  )
-		{
-			for(x=9;x<fb_xres(fb)-45;x=x+pas)
-				{
-					draw_pikatchou(fb,x,y);
-					fb_sync(fb);
-					usleep(1000*1000);
-					careau_blanc(fb);
-					fb_sync(fb);
-				}
-			direct = 0;
-		}
-		else 
-		{
-			for(x=fb_xres(fb)-44;x>9;x=x-pas)
-				{
-					draw_pikatchou(fb,x,y);
-					fb_sync(fb);
-					usleep(1000*1000);
-					careau_blanc(fb);
-					fb_sync(fb);
-				}
-			direct = 1 ;
-		}		
-	}
-	
-}
-
-
-void pikatchu_not_move (struct fb_sess *fb)
-
-{
-	int x =  fb_xres(fb)/2;
-	int y = fb_yres(fb)/3;
-	draw_pikatchou(fb,x,y);
-	fb_sync(fb);
-}
-

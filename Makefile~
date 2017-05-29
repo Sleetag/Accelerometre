@@ -42,25 +42,25 @@ all: game.o main.o affichage.o fb_Graphic.o smb380_drv.o i2c0_drv.o sys.o
 	$(CC) $(CFLAGS) -o $(EXEC) game.o main.o affichage.o fb_Graphic.o smb380_drv.o i2c0_drv.o sys.o $(LDFLAGS)
 
 main.o: main.c
-	$(CC) $(CFLAGS) -o main.o -c main.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o main.o -c main.c $(LDFLAGS) $(LDLIBS)
 
 game.o: game.c game.h
-	$(CC) $(CFLAGS) -o game.o -c game.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o game.o -c game.c $(LDFLAGS) $(LDLIBS)
 
 affichage.o: affichage.c affichage.o
-	$(CC) $(CFLAGS) -o affichage.o -c affichage.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o affichage.o -c affichage.c $(LDFLAGS) $(LDLIBS)
 
 fb_Graphic.o: fb_Graphic.c fb_Graphic.h
-	$(CC) $(CFLAGS) -o fb_Graphic.o -c fb_Graphic.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o fb_Graphic.o -c fb_Graphic.c $(LDFLAGS) $(LDLIBS)
 
 smb380_drv.o : smb380_drv.h smb380_drv.c
-	$(CC) $(CFLAGS) -o smb380_drv.o -c smb380_drv.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o smb380_drv.o -c smb380_drv.c $(LDFLAGS) $(LDLIBS)
 
 i2c0_drv.o : i2c0_drv.h i2c0_drv.c
-	$(CC) $(CFLAGS) -o i2c0_drv.o -c i2c0_drv.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o i2c0_drv.o -c i2c0_drv.c $(LDFLAGS) $(LDLIBS)
 
 sys.o : sys.h sys.c
-	$(CC) $(CFLAGS) -o sys.o -c sys.c $(LDFLAGS) 
+	$(CC) $(CFLAGS) -o sys.o -c sys.c $(LDFLAGS) $(LDLIBS)
 
 clean:
 	rm -f $(EXEC)  *.el* *.gdb *.o *~ romfs_5.img vmlinux.bin
