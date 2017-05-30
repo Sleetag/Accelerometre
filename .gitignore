@@ -1,2 +1,5 @@
 /romfs_5.img
 /vmlinux.bin
+/Accel
+/Accel.gdb
+/Hello

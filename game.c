@@ -1,4 +1,14 @@
 #include "fb_Graphic.h"
+#include "smb380_drv.h"
+#include "game.h"
+#include "affichage.h"
+
+struct fb_sess {
+	int fd;
+	unsigned char *memp;
+	struct fb_var_screeninfo vinfo;
+	struct fb_fix_screeninfo finfo;
+};
 
 void pikatchu_move (struct fb_sess *fb,int pas)
 {
@@ -19,7 +29,7 @@ void pikatchu_move (struct fb_sess *fb,int pas)
 				}
 			direct = 0;
 		}
-		else 
+		else
 		{
 			for(x=fb_xres(fb)-44;x>9;x=x-pas)
 				{
@@ -30,9 +40,8 @@ void pikatchu_move (struct fb_sess *fb,int pas)
 					fb_sync(fb);
 				}
 			direct = 1 ;
-		}		
+		}
 	}
-	
 }
 
 
@@ -61,7 +70,7 @@ void startGame(){
 	}
 
 	printf_message() ;
- 
+
 	printf("Trying to open the framebuffer device...\n");
 
 	fb = fb_init(fb_dev_name);

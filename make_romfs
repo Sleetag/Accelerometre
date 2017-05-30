@@ -1,5 +1,5 @@
 #!/bin/sh
-APP_FILE=Hello
+APP_FILE=Accel
 UCLINUX_PATH=~/uClinux
 ROMFS_PATH=${UCLINUX_PATH}/romfs
 IMAGE_PATH=${UCLINUX_PATH}/images
