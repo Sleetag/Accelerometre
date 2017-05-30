@@ -96,7 +96,8 @@ void fb_sync(struct fb_sess *fb);
 unsigned int invert_y(struct fb_sess *, unsigned int);
 int getCharNum(char);
 unsigned int drawChar(struct fb_sess *, unsigned int, unsigned int, unsigned int, char, unsigned int, unsigned int);
-unsigned int drawString(struct fb_sess *, unsigned int, unsigned int, unsigned int, char s[], unsigned int, unsigned int, unsigned int);
+unsigned int drawString(struct fb_sess *fb, unsigned int size, unsigned int x, unsigned int y, char s[], unsigned int color, unsigned int backcolor, unsigned int firstsize);
+unsigned int drawChar(struct fb_sess *fb, unsigned int size, unsigned int x, unsigned int y, char c, unsigned int color, unsigned int backcolor);
 
 ball makeBall(int, int, int, int);
 void drawBall(struct fb_sess *, ball *);

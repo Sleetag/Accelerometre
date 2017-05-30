@@ -1,3 +1,25 @@
+/**
+ * Polytech Marseille
+ * Case 925 - 163, avenue de Luminy
+ * 13288 Marseille CEDEX 9
+ *
+ * Ce fichier est l'oeuvre d'eleves de Polytech Marseille. Il ne peut etre
+ * reproduit, utilise ou modifie sans l'avis express de ses auteurs.
+ */
+
+/**
+ * @author  Amna Amairi <amna.amairi@etu.univ-amu.fr>
+ * @author2 Amélie Lupo <amelie.lupo@etu.univ-amu.fr>
+ * @author3 Stéphane Nativel <stephane.nativel@etu.univ-amu.fr>
+ *
+ * @version 1.2.3 / 30/05/17
+ */
+
+
+/**
+ * @file affichage.c
+ */
+
 #include "affichage.h"
 #include "smb380_drv.h"
 #include "hal.h"
@@ -68,6 +90,68 @@ static unsigned int fb_get_fb_size(struct fb_sess *fb)
 	return fb->vinfo.xres * fb->vinfo.yres * (fb->vinfo.bits_per_pixel/8);
 }
 
+unsigned int invert_y(struct fb_sess *fb, unsigned int y) {
+
+	return fb_yres(fb) - y;
+}
+
+int getCharNum(char c) {
+
+	if(c >= 32 && c <= 126)
+		return c - 32;
+	else
+		return 63;
+
+}
+
+unsigned int drawChar(struct fb_sess *fb, unsigned int size, unsigned int x, unsigned int y, char c, unsigned int color, unsigned int backcolor) {
+
+	unsigned int i, j, k,l;
+	unsigned int tempcolor;
+
+	y = invert_y(fb, y);
+
+	for(i = 0; i < 5; i++) {
+		for(j = 0; j < 9; j++) {
+
+			if(alphabet[getCharNum(c)][j][i] == 0)
+				tempcolor = backcolor;
+			else
+				tempcolor = color;
+
+			for(k = 0; k < size; k++)
+				for(l = 0; l < size; l++)
+					fb_draw_pixel(fb, x+size*i+k, y-(size*(9-j)+l), tempcolor);
+		}
+	}
+
+	return x + size*6;
+}
+
+unsigned int drawString(struct fb_sess *fb, unsigned int size, unsigned int x, unsigned int y, char s[], unsigned int color, unsigned int backcolor, unsigned int firstsize) {
+
+	unsigned int i = 0, offset;
+	char c;
+
+	c = s[i++];
+
+	offset = drawChar(fb, size+firstsize, x, y, c, color, backcolor);
+
+	while((c = s[i++]) != '\0') {
+
+		if(offset > fb_xres(fb) - (5 + 6*size)) {
+			offset = x;
+			y -= 12*size + firstsize*2;
+		}
+
+		if(offset == x && c == ' ')
+			continue;
+
+		offset = drawChar(fb, size, offset, y + firstsize*2, c, color, backcolor);
+	}
+
+	return offset;
+}
 
 struct fb_sess *fb_init(const char *fb_dev_name)
 {
@@ -1021,65 +1105,7 @@ enum Direction detection(pSMB380_Data_t pData, Int16S seuil_accept_x, Int16S seu
 	return d;
 }
 
-int oldMain(struct fb_sess *fb){
-/*
-	pSMB380_Data_t pData;
-	enum Direction d;
-	unsigned int xres, yres;
-	int i = 0, time = 20 ;
-	char mess[30] ;
-	struct fb_sess *fb;
-	char *fb_dev_name;
-	char buf[256];
-	int max_iter,rst,pk_dir;
 
-
-	calibrage();
-
-	max_iter = 30;
-	i=0;
-
-	while(i<max_iter) {
-		SMB380_GetData(pData);
-		d = detection(pData, 8, 16);
-		printf("Direction : %d \n\r", (int)d);
-		usleep(10000);
-		++i;
-	}
-
-	draw_background(fb);
-	pokiball_initial(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	usleep(1000*1000);
-	droite(fb);
-	//pikatchu_move (fb,30);
-	/*usleep(1000*1000);
-	gauche(fb);
-	usleep(1000*1000);
-	haut(fb);
-	usleep(1000*1000);
-	bas(fb);*/
-
-}
 int isWin(){
 	if(POKIBALL_x>=PIKATCHOU_x-9 && POKIBALL_x<=PIKATCHOU_x+44)return 1;
 	else return 0;
@@ -1090,7 +1116,6 @@ void initGame(struct fb_sess *fb){
 	pikatchou_initial(fb);
 	pokiball_initial(fb);
 }
-
 
 #define ARRAY_NUMELEM(A)	((sizeof(A)/sizeof((A)[0])))
 int main(int argc, char *argv[])
@@ -1177,19 +1202,18 @@ int main(int argc, char *argv[])
 				if(isWin()){
 					++score;
 					printf("Touche\n");
-					++jet;
-					dist_jet = 0;
 					draw_background_haut(fb);
+					draw_background_bas(fb);
 					fb_sync(fb);
 					usleep(1000);
-					initGame(fb);
 
 				}else{//lose
 					printf("loupe :/\n" );
-					initGame(fb);
-					++jet;
-					dist_jet = 0;
 				}
+				initGame(fb);
+				++jet;
+				dist_jet = 0;
+
 
 			}else{
 				++dist_jet;
@@ -1198,11 +1222,22 @@ int main(int argc, char *argv[])
 			//-1
 		}
 		fb_sync(fb);
+		//drawString(struct fb_sess *fb, unsigned int size, unsigned int x,
+		//	 unsigned int y, char s[], unsigned int color, unsigned int backcolor, unsigned int firstsize);
 
 	}
 
-	fb_close(fb);
+	if(score == 3){
+		drawString(fb,1,fb_xres(fb)-120,fb_yres(fb)-40,"YOU WIN",BLACK,WHITE,3);
 
+	}else{
+		drawString(fb,1,fb_xres(fb)-120,fb_yres(fb)-40,"YOU LOSE",BLACK,WHITE,3);
+	}
+	fb_sync(fb);
+	usleep(1000);
+
+
+	fb_close(fb);
 	printf("Done. Exitting...\n");
 
 	return 0 ;
