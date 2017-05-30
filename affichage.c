@@ -121,7 +121,7 @@ struct fb_sess *fb_init(const char *fb_dev_name)
 
 	/* clear display */
 	memset(fb->memp, 0, size);
-	fb_sync(fb);
+	//fb_sync(fb);
 
 	return fb;
 }
@@ -240,7 +240,7 @@ void draw_background(struct fb_sess *fb)
 
 	draw_background_haut(fb);
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 void carreau(struct fb_sess *fb, int x, int y,unsigned int couleur)
 {
@@ -280,7 +280,7 @@ void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centr
 				{
 
 
-					if (y<centre_y)
+					if ((y<centre_y)&&((x-centre_x)*(x-centre_x) + (y-centre_y)*(y-centre_y)>=((rayon/3))*((rayon/3))))
 						couleur = rouge ;
 
 					if (((x-centre_x)*(x-centre_x) + (y-centre_y)*(y-centre_y)<=rayon*rayon
@@ -289,6 +289,7 @@ void draw_pokiball(struct fb_sess *fb,unsigned  int centre_x, unsigned int centr
 					&&(x-centre_x)*(x-centre_x) + (y-centre_y)*(y-centre_y)>=((rayon/3)-2)*((rayon/3)-2)))
 					{
 						couleur = noir ;
+						//couleur
 					}
 
 					carreau(fb, x, y,couleur);
@@ -318,41 +319,41 @@ void pokiball_initial(struct fb_sess *fb)
 	POKIBALL_y = (fb_yres(fb)/3 )+ 81;
 	POKIBALL_r=21;
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void droite(struct fb_sess *fb,int pas)
 {
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (POKIBALL_x+pas< fb_xres(fb)-POKIBALL_r)
 	{
 		POKIBALL_x = POKIBALL_x+pas ;
 		draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
 	}
 	else draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void gauche(struct fb_sess *fb,int pas)
 {
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (POKIBALL_x - pas > POKIBALL_r)
 	{
 		POKIBALL_x = POKIBALL_x-pas;
 		draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
 	}
 	else draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void haut(struct fb_sess *fb,int pas)
 {
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (POKIBALL_y -pas > POKIBALL_r )
 	{
 		POKIBALL_y = POKIBALL_y - pas ;
@@ -360,13 +361,13 @@ void haut(struct fb_sess *fb,int pas)
 		draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
 	}
 	else draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void bas(struct fb_sess *fb,int pas)
 {
 	draw_background_bas(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (POKIBALL_y +pas < fb_yres(fb)-POKIBALL_r )
 	{
 		POKIBALL_y = POKIBALL_y +pas ;
@@ -374,7 +375,7 @@ void bas(struct fb_sess *fb,int pas)
 		draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
 	}
 	else draw_pokiball(fb,POKIBALL_x,POKIBALL_y,POKIBALL_r);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void petit_carreau(struct fb_sess *fb, int x, int y,unsigned int couleur)
@@ -947,35 +948,35 @@ void pikatchou_initial (struct fb_sess *fb)
 	PIKATCHOU_x =  fb_xres(fb)/2;
 	PIKATCHOU_y = fb_yres(fb)/3;
 	draw_background_haut(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	draw_pikatchou(fb,PIKATCHOU_x,PIKATCHOU_y);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void droite_pikatchou(struct fb_sess *fb, int  pas)
 {
 	draw_background_haut(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (PIKATCHOU_x+pas< fb_xres(fb)-44)
 	{
 		PIKATCHOU_x = PIKATCHOU_x+pas ;
 		draw_pikatchou(fb,PIKATCHOU_x,PIKATCHOU_y);
 	}
 	else draw_pikatchou(fb,fb_xres(fb)-44,PIKATCHOU_y);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void gauche_pikatchou(struct fb_sess *fb, int pas)
 {
 	draw_background_haut(fb);
-	fb_sync(fb);
+	//fb_sync(fb);
 	if (PIKATCHOU_x - pas > 9)
 	{
 		PIKATCHOU_x = PIKATCHOU_x-pas;
 		draw_pikatchou(fb,PIKATCHOU_x,PIKATCHOU_y);
 	}
 	else draw_pikatchou(fb,9,PIKATCHOU_y);
-	fb_sync(fb);
+	//fb_sync(fb);
 }
 
 void calibrage (void) {
@@ -1079,6 +1080,17 @@ int oldMain(struct fb_sess *fb){
 	bas(fb);*/
 
 }
+int isWin(){
+	if(POKIBALL_x>=PIKATCHOU_x-9 && POKIBALL_x<=PIKATCHOU_x+44)return 1;
+	else return 0;
+}
+
+void initGame(struct fb_sess *fb){
+	draw_background(fb);
+	pikatchou_initial(fb);
+	pokiball_initial(fb);
+}
+
 
 #define ARRAY_NUMELEM(A)	((sizeof(A)/sizeof((A)[0])))
 int main(int argc, char *argv[])
@@ -1093,6 +1105,7 @@ int main(int argc, char *argv[])
 	char *fb_dev_name;
 	char buf[256];
 	int max_iter,rst,pk_dir,pas;
+	int fin,jet,limit_jet,distance,score,dist_jet;
 
 	if(argc == 1) {
 		fb_dev_name = "/dev/fb0";
@@ -1114,27 +1127,22 @@ int main(int argc, char *argv[])
 	}
 
 	calibrage();
+	initGame(fb);
 
-	draw_background(fb);
-	pikatchou_initial(fb);
-	pokiball_initial(fb);
 	pk_dir = 0;
-	pas = 30;
+	pas = 5;
+	fin = 0;
+	jet=0;
+	limit_jet=5;
+	distance=3;
+	dist_jet=0;
+	score=0;
 
-	while(1){
+
+	while(jet < 3){
 		SMB380_GetData(pData);
 		d = detection(pData, 8, 16);
-		rst = (int)d;
-		//0 - 1 - 2
-		if(rst == 0){
-			gauche(fb,30);
-		}else if(rst==1){
-			droite(fb,30);
-		}else if(rst==2){
-			haut(fb,10);
-		}else{
-			//rien
-		}
+
 		printf("Pikachou_x = %i\n",PIKATCHOU_x );
 		if(PIKATCHOU_x + pas < fb_xres(fb)-44 && !pk_dir){
 			droite_pikatchou(fb,pas);
@@ -1155,8 +1163,41 @@ int main(int argc, char *argv[])
 			pk_dir=1;
 			printf("Pk gauche/droite\n");
 		}
-		usleep(1000);
+		usleep(10);
 
+		rst = (int)d;
+		//0 - 1 - 2
+		if(rst == 0){
+			gauche(fb,30);
+		}else if(rst==1){
+			droite(fb,30);
+		}else if(rst==2){
+			haut(fb,10);
+			if(dist_jet == distance){
+				if(isWin()){
+					++score;
+					printf("Touche\n");
+					++jet;
+					dist_jet = 0;
+					draw_background_haut(fb);
+					fb_sync(fb);
+					usleep(1000);
+					initGame(fb);
+
+				}else{//lose
+					printf("loupe :/\n" );
+					initGame(fb);
+					++jet;
+					dist_jet = 0;
+				}
+
+			}else{
+				++dist_jet;
+			}
+		}else{
+			//-1
+		}
+		fb_sync(fb);
 
 	}
 
